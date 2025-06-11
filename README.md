@@ -165,12 +165,26 @@ With the SD card not used, the following GPIOs are typically available for senso
 
 - [x] ESP32-E board breadboarded and powered
 - [x] DS18B20 temperature sensor connected and readings verified
-- [ ] Add flame and vibration sensors
+- [x] Flame sensor (3-pin digital) connected and working (range ~15cm)
+- [ ] Add vibration sensor
 - [ ] Add current sensor
 - [ ] Add TFT display
 - [ ] Develop web dashboard
 - [ ] Implement fan control logic
 - [ ] Add OTA updates
+
+---
+
+## 🔥 Flame Sensor (3-pin Digital) Integration
+
+- **Type:** 3-pin digital flame sensor module
+- **Wiring:**
+  - VCC → 3.3V rail
+  - GND → GND rail
+  - DO (Digital Out) → GPIO 14 (ESP32-E)
+- **Code:** Reads digital output; prints "DETECTED" when flame is present (LOW), "NOT DETECTED" otherwise.
+- **Range:** ~15cm (may vary by module and environment)
+- **Note:** For greater coverage or directionality, consider upgrading to a 5-channel flame sensor module in the future (with 5 LEDs in a round shape).
 
 ---
 
