@@ -1,18 +1,21 @@
-#include <Arduino.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#define ONE_WIRE_BUS 15  // GPIO pin for DS18B20 data
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    Serial.begin(115200);
+    sensors.begin();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    sensors.requestTemperatures();
+    float tempC = sensors.getTempCByIndex(0);
+    Serial.print("Temperature: ");
+    Serial.print(tempC);
+    Serial.println(" °C");
+    delay(2000);
 }

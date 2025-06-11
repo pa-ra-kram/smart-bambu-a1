@@ -2,6 +2,8 @@
 
 A smart, WiFi-enabled monitoring and control system for your Bambu Lab A1 3D printer enclosure. This project aims to improve safety, convenience, and insight for your 3D printing setup by tracking temperature, detecting hazards, and automating cooling—all viewable from a simple web dashboard.
 
+> **Note:** Development is currently on an ESP32-E board for ease of prototyping. The code and wiring are designed to be easily portable to a smaller ESP32 board with camera (e.g., ESP32-CAM) for final deployment.
+
 ---
 
 ## 🚀 Project Overview
@@ -21,11 +23,13 @@ This project uses an ESP32S3 CAM module as the main controller to monitor and co
 
 You're just getting started! Here's your current setup:
 
-- **ESP32S3 CAM** module placed on a breadboard.
+- **ESP32-E** board placed on a breadboard for prototyping.
 - **Power rails:**  
   - Left rail: 5V (from BEC, for ESP32 and sensors)  
   - Right rail: 24V (from printer AMS port, for fans)
 - **Common ground**: All GNDs tied together.
+
+> **Note:** The ESP32-E is used for development. For final deployment, the project can be ported to a compact ESP32 board with camera support.
 
 **Next steps:**  
 Add sensors (temperature, flame, vibration, current), display, and fans as you progress.
