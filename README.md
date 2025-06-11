@@ -163,14 +163,42 @@ With the SD card not used, the following GPIOs are typically available for senso
 
 ## 📝 Roadmap
 
-- [x] ESP32S3 CAM breadboarded and powered
-- [ ] Add temperature sensor
+- [x] ESP32-E board breadboarded and powered
+- [x] DS18B20 temperature sensor connected and readings verified
 - [ ] Add flame and vibration sensors
 - [ ] Add current sensor
 - [ ] Add TFT display
 - [ ] Develop web dashboard
 - [ ] Implement fan control logic
 - [ ] Add OTA updates
+
+---
+
+## 🧩 ESP32-E Pinout Reference (Text)
+
+**Power:**
+- 3V3: 3.3V output (for sensors/modules)
+- 5V: Main power input (from breadboard rail)
+- GND: Ground
+
+**Digital I/O:**
+- GPIO 0–39: General purpose I/O (not all pins are available; some are input-only or have special functions)
+- GPIO 15: DS18B20 data (1-Wire)
+- GPIO 12, 13, 14, 16: Available for sensors/displays
+- GPIO 2, 4: Available (GPIO 4 often used for onboard LED)
+- GPIO 34, 35, 36, 39: Input-only, ideal for analog sensors
+
+**Special Pins:**
+- EN: Reset/enable
+- VIN: Alternate 5V input
+- TX/RX: Serial communication
+
+**SPI/I2C/UART:**
+- SPI: SCK, MOSI, MISO, CS (assignable to most GPIOs)
+- I2C: SDA, SCL (assignable to most GPIOs)
+- UART: TX, RX (default on GPIO 1, 3)
+
+> For a visual reference, see: ![ESP32-E Pinout](https://dfimg.dfrobot.com/enshop/image/data/DFR0654/pinout.png)
 
 ---
 
