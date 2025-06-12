@@ -186,10 +186,10 @@ With the SD card not used, the following GPIOs are typically available for senso
   - MOSFET gate → GPIO 17 (ESP32-E)
   - Flyback diode across fan terminals for protection
 - **Control Logic:**
-  - Level 0 (Off): <30°C
-  - Level 1 (Low, 25%): 30-39°C
-  - Level 2 (Medium, 50%): 40-49°C
-  - Level 3 (High, 100%): ≥50°C
+  - Level 0 (Off): <35°C
+  - Level 1 (Low, 25%): 35-44°C
+  - Level 2 (Medium, 50%): 45-54°C
+  - Level 3 (High, 100%): ≥55°C
 - **Testing:** Successfully tested with heat gun; fan speed responds correctly to temperature changes.
 
 ---
@@ -198,27 +198,34 @@ With the SD card not used, the following GPIOs are typically available for senso
 
 - **Type:** 4-pin RGB LED (common cathode)
 - **Wiring:**
-  - R, G, B → GPIO 18, 19, 21 (ESP32-E) with 220Ω resistors
+  - R, G, B → GPIO 2, 4, 13 (FireBeetle ESP32-E) with 220Ω resistors
   - Common cathode → GND rail
 - **Color Coding:**
-  - Blue: Fan off (<30°C)
-  - Green: Low speed (30-39°C)
-  - Yellow: Medium speed (40-49°C)
-  - Red: High speed (≥50°C)
-- **Beep Logic:** Beeps when fan level changes (1-4 beeps for levels 0-3)
-- **Note:** Buzzer troubleshooting pending (may require 5V or different type).
+  - Blue: Fan off (<35°C)
+  - Green: Low speed (35-44°C)
+  - Yellow: Medium speed (45-54°C)
+  - Red: High speed (≥55°C)
+- **Note:** Buzzer integration skipped for now; may be added later for audio feedback.
 
 ---
 
-## 📺 Next Milestone: TFT Display Integration
+## 📺 TFT Display Integration (Complete)
 
 - **Goal:** Add a 1.44" 128x128 ST7735 TFT display to show real-time sensor data and system status.
-- **Planned Display:**
+- **Display Content:**
   - Temperature reading
-  - Fan level and speed
+  - Fan level and speed percentage
   - Flame sensor status
-  - System uptime or other diagnostics
-- **Wiring and code examples will be provided in the next step.**
+  - System title and status
+- **Wiring:**
+  - VCC → 3.3V rail
+  - GND → GND rail
+  - SCK → GPIO 18 (Hardware SPI)
+  - MOSI → GPIO 23 (Hardware SPI)
+  - CS → GPIO 5
+  - DC → GPIO 16
+  - RESET → GPIO 25
+- **Testing:** Successfully displays "Hello" message on startup, then live sensor data.
 
 ---
 
@@ -235,31 +242,102 @@ With the SD card not used, the following GPIOs are typically available for senso
 
 ---
 
-## 🧩 ESP32-E Pinout Reference (Text)
+## 🧩 FireBeetle ESP32-E Complete Pinout Reference
 
-**Power:**
-- 3V3: 3.3V output (for sensors/modules)
-- 5V: Main power input (from breadboard rail)
-- GND: Ground
+**⚠️ CRITICAL: Use this table as the definitive reference for ALL pin assignments!**
 
-**Digital I/O:**
-- GPIO 0–39: General purpose I/O (not all pins are available; some are input-only or have special functions)
-- GPIO 15: DS18B20 data (1-Wire)
-- GPIO 12, 13, 14, 16: Available for sensors/displays
-- GPIO 2, 4: Available (GPIO 4 often used for onboard LED)
-- GPIO 34, 35, 36, 39: Input-only, ideal for analog sensors
+Based on [official DFRobot documentation](https://wiki.dfrobot.com/FireBeetle_Board_ESP32_E_SKU_DFR0654#6.%20Pinout)
 
-**Special Pins:**
-- EN: Reset/enable
-- VIN: Alternate 5V input
-- TX/RX: Serial communication
+### **Power Pins**
+| Physical Pin | Function | Voltage | Max Current | Notes |
+|--------------|----------|---------|-------------|-------|
+| 3V3 | 3.3V Output | 3.3V | 600mA | For sensors/modules |
+| 5V | 5V Input | 5V | - | Main power input |
+| GND | Ground | 0V | - | Multiple GND pins |
+| VIN | Voltage Input | 7-12V | - | Alternative power |
 
-**SPI/I2C/UART:**
-- SPI: SCK, MOSI, MISO, CS (assignable to most GPIOs)
-- I2C: SDA, SCL (assignable to most GPIOs)
-- UART: TX, RX (default on GPIO 1, 3)
+### **Available GPIO Pins on FireBeetle ESP32-E**
+| GPIO | Pin Label | Type | PWM | ADC | Current Usage | Available |
+|------|-----------|------|-----|-----|---------------|-----------|
+| 2 | D2 | Digital I/O | ✅ | ✅ | **RGB Red** | ❌ |
+| 4 | D4 | Digital I/O | ✅ | ✅ | **RGB Green** | ❌ |
+| 5 | D5 | Digital I/O | ✅ | ✅ | **TFT CS** | ❌ |
+| 12 | D12 | Digital I/O | ✅ | ✅ | **AVAILABLE** | ✅ |
+| 13 | D13 | Digital I/O | ✅ | ✅ | **RGB Blue** | ❌ |
+| 14 | D14 | Digital I/O | ✅ | ✅ | **Flame Sensor** | ❌ |
+| 15 | D15 | Digital I/O | ✅ | ✅ | **DS18B20** | ❌ |
+| 16 | D16 | Digital I/O | ✅ | ❌ | **TFT DC** | ❌ |
+| 17 | D17 | Digital I/O | ✅ | ❌ | **Fan PWM** | ❌ |
+| 18 | D18/SCK | SPI Clock | ✅ | ❌ | **TFT SCLK** | ❌ |
+| 19 | D19/MISO | SPI Data In | ✅ | ❌ | **AVAILABLE** | ✅ |
+| 21 | D21/SDA | I2C Data | ✅ | ❌ | **AVAILABLE** | ✅ |
+| 22 | D22/SCL | I2C Clock | ✅ | ❌ | **AVAILABLE** | ✅ |
+| 23 | D23/MOSI | SPI Data Out | ✅ | ❌ | **TFT MOSI** | ❌ |
+| 25 | D25 | Digital I/O | ✅ | ✅ | **TFT RST** | ❌ |
+| 34 | A2 | Analog Input | ❌ | ✅ | **AVAILABLE** | ✅ |
+| 35 | A3 | Analog Input | ❌ | ✅ | **AVAILABLE** | ✅ |
+| 36 | A0 | Analog Input | ❌ | ✅ | **Current Sensor** | ❌ |
+| 39 | A1 | Analog Input | ❌ | ✅ | **AVAILABLE** | ✅ |
 
-> For a visual reference, see: ![ESP32-E Pinout](https://dfimg.dfrobot.com/enshop/image/data/DFR0654/pinout.png)
+### **Reserved/Special Pins (DO NOT USE)**
+| GPIO | Function | Notes |
+|------|----------|-------|
+| 0 | Boot Mode | Must be HIGH for normal boot |
+| 1 | UART TX | Serial communication |
+| 3 | UART RX | Serial communication |
+
+### **Pins That DO NOT EXIST on FireBeetle ESP32-E**
+❌ **These pins are found on other ESP32 variants but NOT on this board:**
+- GPIO 26, 27, 32, 33 (commonly referenced but don't exist here)
+- GPIO 6, 7, 8, 9, 10, 11 (internal flash pins)
+
+> **Visual Reference:** ![FireBeetle ESP32-E Pinout](https://dfimg.dfrobot.com/enshop/image/data/DFR0654/pinout.png)
+
+---
+
+## 📋 Project Pin Usage & Future Expansion
+
+### **Current Project Pin Assignments**
+| Device/Function | GPIO | Pin Label | Type | Status | Notes |
+|-----------------|------|-----------|------|--------|-------|
+| DS18B20 Temperature | 15 | D15 | Digital (1-Wire) | ✅ Working | Temperature monitoring |
+| Flame Sensor | 14 | D14 | Digital Input | ✅ Working | Fire detection |
+| Fan PWM Control | 17 | D17 | Digital Output | ✅ Working | MOSFET gate control |
+| RGB LED Red | 2 | D2 | Digital Output (PWM) | ✅ Fixed | Visual feedback |
+| RGB LED Green | 4 | D4 | Digital Output (PWM) | ✅ Fixed | Visual feedback |
+| RGB LED Blue | 13 | D13 | Digital Output (PWM) | ✅ Fixed | Visual feedback |
+| TFT Display CS | 5 | D5 | Digital Output | ✅ Working | SPI Chip Select |
+| TFT Display DC | 16 | D16 | Digital Output | ✅ Working | Data/Command |
+| TFT Display RST | 25 | D25 | Digital Output | ✅ Working | Reset |
+| TFT Display MOSI | 23 | D23 | Digital Output | ✅ Working | SPI Data |
+| TFT Display SCLK | 18 | D18 | Digital Output | ✅ Working | SPI Clock |
+| Current Sensor (Planned) | 36 | A0 | Analog Input | 🔄 Planned | SCT-013-000 |
+
+### **Available Pins for Future Expansion**
+| GPIO | Pin Label | Type | Capabilities | Best Use Case |
+|------|-----------|------|--------------|---------------|
+| 12 | D12 | Digital I/O | PWM, ADC | Additional sensor/actuator |
+| 19 | D19 (MISO) | Digital I/O | PWM, SPI | SPI devices or general I/O |
+| 21 | D21 (SDA) | Digital I/O | PWM, I2C | I2C sensors (BME280, RTC, etc.) |
+| 22 | D22 (SCL) | Digital I/O | PWM, I2C | I2C sensors (BME280, RTC, etc.) |
+| 34 | A2 | Analog Input | ADC only | Analog sensors (NTC, potentiometer) |
+| 35 | A3 | Analog Input | ADC only | Analog sensors (NTC, potentiometer) |
+| 39 | A1 | Analog Input | ADC only | Analog sensors (NTC, potentiometer) |
+
+### **Pin Selection Guidelines for Future Development**
+1. **Digital Sensors/Controls:** Use GPIO 12, 19 (available digital pins)
+2. **I2C Devices:** Use GPIO 21 (SDA) and 22 (SCL) - hardware I2C bus
+3. **Analog Sensors:** Use GPIO 34, 35, 39 (input-only ADC pins)
+4. **Additional SPI Devices:** Use GPIO 19 (MISO) with existing SPI bus
+5. **PWM Outputs:** GPIO 12, 19, 21, 22 support PWM
+
+### **Future Expansion Ideas**
+- **Environmental Sensors:** BME280 (temp/humidity/pressure) via I2C
+- **Real-Time Clock:** DS3231 RTC module via I2C
+- **Additional Temperature:** NTC thermistors via analog pins
+- **Servo Control:** Camera pan/tilt using PWM pins
+- **Audio Detection:** Microphone module for print monitoring
+- **Relay Control:** Additional fan or light control
 
 ---
 
@@ -287,3 +365,38 @@ MIT License
   - Use calibration and thresholds to detect printer states: RUN (high/variable current), PAUSE (steady, lower current), STOP (very low current)
   - Requires calibration for your specific setup
 - **Note:** Vibration sensor skipped; may add a microphone module for redundant print status detection in the future.
+
+---
+
+## 📋 FireBeetle ESP32-E Pin Reference & Usage
+
+Based on the [official DFRobot pinout documentation](https://wiki.dfrobot.com/FireBeetle_Board_ESP32_E_SKU_DFR0654#6.%20Pinout):
+
+### **Current Project Pin Usage**
+| Device/Function | GPIO | Pin Label | Type | Notes |
+|-----------------|------|-----------|------|-------|
+| DS18B20 Temperature | 15 | D15 | Digital | 1-Wire protocol |
+| Flame Sensor | 14 | D14 | Digital Input | 3-pin digital module |
+| Fan PWM Control | 17 | D17 | Digital Output | MOSFET gate control |
+| RGB LED Red | 2 | D2 | Digital Output | PWM for brightness |
+| RGB LED Green | 4 | D4 | Digital Output | PWM for brightness |
+| RGB LED Blue | 13 | D13 | Digital Output | PWM for brightness |
+| TFT CS | 5 | D5 | Digital Output | SPI Chip Select |
+| TFT DC | 16 | D16 | Digital Output | Data/Command |
+| TFT RST | 25 | D25 | Digital Output | Reset |
+| TFT MOSI | 23 | MOSI | Digital Output | SPI Data |
+| TFT SCLK | 18 | SCK | Digital Output | SPI Clock |
+| Current Sensor | 36 | A0 | Analog Input | SCT-013-000 (planned) |
+
+### **Available for Future Expansion**
+| GPIO | Pin Label | Type | Suggested Use |
+|------|-----------|------|---------------|
+| 12   | D12 | Digital I/O | Additional sensor/control |
+| 19   | MISO | Digital I/O | SPI devices or general I/O |
+| 21   | SDA | Digital I/O | I2C devices |
+| 22   | SCL | Digital I/O | I2C devices |
+| 34   | A2 | Analog Input | Additional analog sensors |
+| 35   | A3 | Analog Input | Additional analog sensors |
+| 39   | A1 | Analog Input | Additional analog sensors |
+
+**Reference:** [DFRobot FireBeetle ESP32-E Pinout](https://wiki.dfrobot.com/FireBeetle_Board_ESP32_E_SKU_DFR0654#6.%20Pinout)
