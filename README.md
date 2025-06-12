@@ -166,12 +166,59 @@ With the SD card not used, the following GPIOs are typically available for senso
 - [x] ESP32-E board breadboarded and powered
 - [x] DS18B20 temperature sensor connected and readings verified
 - [x] Flame sensor (3-pin digital) connected and working (range ~15cm)
-- [ ] Add vibration sensor
+- [x] 24V fan control with PWM based on temperature (4 speed levels)
+- [x] RGB LED visual feedback for fan levels
 - [ ] Add current sensor
 - [ ] Add TFT display
 - [ ] Develop web dashboard
 - [ ] Implement fan control logic
 - [ ] Add OTA updates
+
+---
+
+## 🌀 24V Fan Control Integration (Complete)
+
+- **Type:** PWM-controlled 24V fans via N-channel MOSFET
+- **Wiring:**
+  - Fan + → 24V rail
+  - Fan - → MOSFET drain
+  - MOSFET source → GND rail
+  - MOSFET gate → GPIO 17 (ESP32-E)
+  - Flyback diode across fan terminals for protection
+- **Control Logic:**
+  - Level 0 (Off): <30°C
+  - Level 1 (Low, 25%): 30-39°C
+  - Level 2 (Medium, 50%): 40-49°C
+  - Level 3 (High, 100%): ≥50°C
+- **Testing:** Successfully tested with heat gun; fan speed responds correctly to temperature changes.
+
+---
+
+## 🌈 RGB LED Visual Feedback (Complete)
+
+- **Type:** 4-pin RGB LED (common cathode)
+- **Wiring:**
+  - R, G, B → GPIO 18, 19, 21 (ESP32-E) with 220Ω resistors
+  - Common cathode → GND rail
+- **Color Coding:**
+  - Blue: Fan off (<30°C)
+  - Green: Low speed (30-39°C)
+  - Yellow: Medium speed (40-49°C)
+  - Red: High speed (≥50°C)
+- **Beep Logic:** Beeps when fan level changes (1-4 beeps for levels 0-3)
+- **Note:** Buzzer troubleshooting pending (may require 5V or different type).
+
+---
+
+## 📺 Next Milestone: TFT Display Integration
+
+- **Goal:** Add a 1.44" 128x128 ST7735 TFT display to show real-time sensor data and system status.
+- **Planned Display:**
+  - Temperature reading
+  - Fan level and speed
+  - Flame sensor status
+  - System uptime or other diagnostics
+- **Wiring and code examples will be provided in the next step.**
 
 ---
 
@@ -225,3 +272,18 @@ Ideas, feedback, and pull requests are welcome as the project grows!
 ## 📄 License
 
 MIT License
+
+---
+
+## ⚡ Current Sensor (SCT-013-000) Integration
+
+- **Type:** Non-invasive AC current sensor (SCT-013-000, 100A, 1V output)
+- **Wiring:**
+  - Cut or use a 3.5mm jack-to-terminal adapter to access the wires
+  - Tip (Signal) → GPIO 36 (ESP32-E analog input)
+  - Sleeve (GND) → GND rail
+- **Usage:**
+  - Reads analog voltage proportional to AC current
+  - Use calibration and thresholds to detect printer states: RUN (high/variable current), PAUSE (steady, lower current), STOP (very low current)
+  - Requires calibration for your specific setup
+- **Note:** Vibration sensor skipped; may add a microphone module for redundant print status detection in the future.
